@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Salary Calculator</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Simple Salary Calculator</h1>
+
+        <label>Basic Salary</label>
+        <input type="number" id="basic" placeholder="Enter basic salary">
+
+        <label>Allowances</label>
+        <input type="number" id="allow" placeholder="Enter allowances">
+
+        <label>Deductions</label>
+        <input type="number" id="deduct" placeholder="Enter deductions">
+
+        <label>Overtime Hours</label>
+        <input type="number" id="otHours" placeholder="Enter overtime hours">
+
+        <label>Overtime Rate</label>
+        <input type="number" id="otRate" placeholder="Enter overtime rate">
+
+        <div class="row">
+            <button class="calc" onclick="calculate()">Calculate</button>
+            <button class="reset" onclick="resetForm()">Reset</button>
+        </div>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function calculate() {
+            let basic = parseFloat(document.getElementById("basic").value);
+            if (isNaN(basic) || basic < 0) {
+                alert("Please enter a valid Basic Salary");
+                return;
+            }
+            let allow = parseFloat(document.getElementById("allow").value) || 0;
+            let deduct = parseFloat(document.getElementById("deduct").value) || 0;
+            let otHours = parseFloat(document.getElementById("otHours").value) || 0;
+            let otRate = parseFloat(document.getElementById("otRate").value) || 0;
+
+            let gross = basic + allow;
+            let overtime = otHours * otRate;
+            let net = gross - deduct;
+            let total = net + overtime;
+
+            document.getElementById("result").innerHTML = `
+                <b>Gross Salary:</b> ₹${gross.toFixed(2)}<br>
+                <b>Deductions:</b> ₹${deduct.toFixed(2)}<br>
+                <b>Net Salary:</b> ₹${net.toFixed(2)}<br>
+                <b>Overtime:</b> ₹${overtime.toFixed(2)}<br>
+                <hr>
+                <b>Total Salary:</b> ₹${total.toFixed(2)}
+            `;
+
+            localStorage.setItem("lastSalary", total.toFixed(2));
+        }
+
+        function resetForm() {
+            ["basic", "allow", "deduct", "otHours", "otRate"].forEach(id => document.getElementById(id).value = "");
+            document.getElementById("result").innerHTML = "";
+        }
+
+        window.onload = () => {
+            let last = localStorage.getItem("lastSalary");
+            if (last) {
+                document.getElementById("result").innerHTML = `<b>Last Calculated Total Salary:</b> ₹${last}`;
+            }
+        };
+    </script>
+
+</body>
+
+</html>
