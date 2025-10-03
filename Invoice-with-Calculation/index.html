@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="box">
+        <h2>Invoice Calculator</h2>
+        <form id="f">
+            <input type="text" id="n" placeholder="Item">
+            <input type="number" id="q" placeholder="Qty" min="1">
+            <input type="number" id="p" placeholder="Price" min="1">
+            <input type="number" id="d" placeholder="Discount %" min="0" max="100">
+            <button class="add">Add</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                    <th>Disc%</th>
+                    <th>Total</th>
+                    <th>Del</th>
+                </tr>
+            </thead>
+            <tbody id="list"></tbody>
+        </table>
+
+        <div class="total">
+            <p>Subtotal: <span id="sub">0</span></p>
+            <p>Discount: <span id="disc">0</span></p>
+            <p>Tax(10%): <span id="tx">0</span></p>
+            <p><b>Grand: <span id="gt">0</span></b></p>
+            <button class="reset" onclick="clr()">Reset</button>
+        </div>
+    </div>
+
+    <script>
+        let arr = []
+        document.getElementById('f').addEventListener('submit', function (e) {
+            e.preventDefault()
+            let n = document.getElementById('n').value.trim()
+            let q = parseFloat(document.getElementById('q').value)
+            let p = parseFloat(document.getElementById('p').value)
+            let d = parseFloat(document.getElementById('d').value) || 0
+            if (!n || q <= 0 || p <= 0 || d < 0 || d > 100) { alert('check inputs'); return }
+            let tot = q * p - (q * p * d / 100)
+            arr.push({ n, q, p, d, tot })
+            show()
+            this.reset()
+        })
+
+        function show() {
+            let tb = ''
+            let sub = 0, dis = 0
+            arr.forEach((it, i) => {
+                sub += it.q * it.p
+                dis += it.q * it.p - it.tot
+                tb += `<tr>
+<td>${it.n}</td>
+<td>${it.q}</td>
+<td>${it.p.toFixed(2)}</td>
+<td>${it.d}</td>
+<td>${it.tot.toFixed(2)}</td>
+<td><button onclick="del(${i})">x</button></td>
+</tr>`
+            })
+            document.getElementById('list').innerHTML = tb
+            let tax = (sub - dis) * 0.10
+            let gt = sub - dis + tax
+            document.getElementById('sub').textContent = sub.toFixed(2)
+            document.getElementById('disc').textContent = dis.toFixed(2)
+            document.getElementById('tx').textContent = tax.toFixed(2)
+            document.getElementById('gt').textContent = gt.toFixed(2)
+        }
+
+        function del(i) { arr.splice(i, 1); show() }
+        function clr() { arr = []; show() }
+    </script>
+</body>
+
+</html>

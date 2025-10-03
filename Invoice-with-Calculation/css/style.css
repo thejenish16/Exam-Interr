@@ -1,0 +1,79 @@
+body {
+    font-family: sans-serif;
+    background: #eee;
+    margin: 0;
+    padding: 20px;
+}
+
+h2 {
+    text-align: center;
+}
+
+.box {
+    max-width: 800px;
+    margin: auto;
+    background: #fff;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+form {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+input,
+button {
+    padding: 8px;
+    font-size: 14px;
+}
+
+.add {
+    background: green;
+    color: #fff;
+    border: none;
+    cursor: pointer
+}
+
+.reset {
+    background: red;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th,
+td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+}
+
+th {
+    background: #444;
+    color: #fff;
+}
+
+.total {
+    text-align: right;
+    margin-top: 15px;
+}
+
+.total p {
+    margin: 4px 0;
+}
+
+@media(max-width:600px) {
+    form {
+        grid-template-columns: 1fr 1fr
+    }
+}
