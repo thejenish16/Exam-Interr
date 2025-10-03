@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Budget Tracker</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Budget Tracker</h1>
+        <label>Budget</label><input id="budget" type="number">
+        <button class="set-budget" onclick="setBudget()">Set Budget</button>
+
+        <div class="summary">
+            <p>Total Budget: ₹<span id="totalBudget">0</span></p>
+            <p>Total Expenses: ₹<span id="totalExpenses">0</span></p>
+            <p>Remaining: ₹<span id="remainingBalance">0</span></p>
+        </div>
+
+        <hr>
+        <label>Expense Title</label><input id="expenseTitle" type="text">
+        <label>Amount</label><input id="expenseAmount" type="number">
+        <button class="add-expense" onclick="addExpense()">Add Expense</button>
+
+        <h2>Expense History</h2>
+        <ul id="expenseList"></ul>
+
+        <button class="reset-budget" onclick="resetBudget()">Reset</button>
+    </div>
+
+    <script>
+        let budget = 0, expenses = [];
+        function update() {
+            let total = expenses.reduce((a, b) => a + b.amount, 0);
+            document.getElementById("totalBudget").innerText = budget.toFixed(2);
+            document.getElementById("totalExpenses").innerText = total.toFixed(2);
+            document.getElementById("remainingBalance").innerText = (budget - total).toFixed(2);
+            let list = document.getElementById("expenseList"); list.innerHTML = "";
+            expenses.forEach(e => { let li = document.createElement("li"); li.innerHTML = `${e.title} - ₹${e.amount.toFixed(2)} <button onclick="removeExpense(${e.id})">x</button>`; list.appendChild(li); });
+            localStorage.setItem("budgetData", JSON.stringify({ budget, expenses }));
+        }
+        function setBudget() { let b = parseFloat(document.getElementById("budget").value); if (b > 0) { budget = b; update(); document.getElementById("budget").value = "" } else alert("Enter valid budget"); }
+        function addExpense() { let t = document.getElementById("expenseTitle").value.trim(); let a = parseFloat(document.getElementById("expenseAmount").value); if (t && a > 0) { expenses.push({ id: Date.now(), title: t, amount: a }); update(); document.getElementById("expenseTitle").value = ""; document.getElementById("expenseAmount").value = "" } else alert("Enter valid expense"); }
+        function removeExpense(id) { expenses = expenses.filter(e => e.id !== id); update(); }
+        function resetBudget() { budget = 0; expenses = []; update(); localStorage.removeItem("budgetData"); }
+        window.onload = () => { let d = JSON.parse(localStorage.getItem("budgetData")); if (d) { budget = d.budget; expenses = d.expenses; update(); } };
+    </script>
+</body>
+
+</html>
