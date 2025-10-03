@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz App</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div id="start">
+            <h1>Welcome to Quiz 🎯</h1>
+            <p style="color:#555;font-size:14px;">You have 10 seconds per question.</p>
+            <button onclick="startQuiz()">Start Quiz</button>
+        </div>
+
+        <div id="quiz" class="hidden">
+            <div class="top"><span id="qnum"></span><span id="timer"></span></div>
+            <h2 id="question"></h2>
+            <div id="options"></div>
+            <button onclick="nextQ()">Next</button>
+        </div>
+
+        <div id="result" class="hidden">
+            <h1>Quiz Completed 🎉</h1>
+            <p id="score"></p>
+            <button onclick="restart()">Restart Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        const qs = [
+            { q: "What is 2+2?", opts: ["3", "4", "5", "6"], ans: 1 },
+            { q: "Capital of France?", opts: ["Paris", "Rome", "Berlin", "Madrid"], ans: 0 },
+            { q: "5×3=?", opts: ["8", "10", "15", "20"], ans: 2 },
+            { q: "HTML stands for?", opts: ["CSS", "JS", "HyperText Markup Language", "C++"], ans: 2 },
+            { q: "Largest planet?", opts: ["Earth", "Mars", "Jupiter", "Venus"], ans: 2 }
+        ];
+        let cur = 0, score = 0, timer, iv;
+
+        const $ = id => document.getElementById(id);
+
+        function startQuiz() {
+            $("start").classList.add("hidden");
+            $("quiz").classList.remove("hidden");
+            loadQ();
+        }
+        function loadQ() {
+            clearInterval(iv);
+            let q = qs[cur];
+            $("qnum").textContent = `Q ${cur + 1} of ${qs.length}`;
+            $("question").textContent = q.q;
+            $("options").innerHTML = q.opts.map((o, i) =>
+                `<button class="option" onclick="choose(this,${i})">${o}</button>`).join("");
+            timer = 10; $("timer").textContent = `⏳ ${timer}s`;
+            iv = setInterval(() => {
+                $("timer").textContent = `⏳ ${--timer}s`;
+                if (!timer) { clearInterval(iv); nextQ(); }
+            }, 1000);
+        }
+        function choose(btn, i) {
+            clearInterval(iv);
+            [...document.querySelectorAll(".option")].forEach(b => b.disabled = true);
+            if (i === qs[cur].ans) { btn.classList.add("correct"); score++; }
+            else { btn.classList.add("wrong"); document.querySelectorAll(".option")[qs[cur].ans].classList.add("correct"); }
+        }
+        function nextQ() {
+            if (++cur < qs.length) loadQ();
+            else {
+                $("quiz").classList.add("hidden");
+                $("result").classList.remove("hidden");
+                $("score").textContent = `You scored ${score} / ${qs.length}`;
+            }
+        }
+        function restart() {
+            cur = score = 0;
+            $("result").classList.add("hidden");
+            $("quiz").classList.remove("hidden");
+            loadQ();
+        }
+    </script>
+</body>
+
+</html>
